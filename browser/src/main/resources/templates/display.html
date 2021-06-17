@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head
+        xmlns:th="https://www.thymeleaf.org"
+>
+    <meta charset="UTF-8">
+    <title>楚哩楚哩视频网</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+</head>
+<body>
+    <div class="main" ref="main" th:data-id="${id}">
+        <h1> {{displayName}} </h1>
+        <button @click="download">下载</button>
+        <label>
+            <select name="resolution" v-model="resolution" @change="changeResolution">
+                <option value="orig">原画</option>
+                <option value="720p">720P</option>
+                <option value="360p">360P</option>
+            </select>
+        </label>
+        <hr/>
+        <video ref="video" style="width: 80%" autobuffer="true" controls="true">
+            <source :src="`/video/${id}?inline=true&resolution=${resolution}`" type="video/mp4"/>
+        </video>
+    </div>
+
+    <script type="text/javascript">
+        let main = new Vue({
+            el: ".main",
+            data: {
+                id: -1,
+                displayName: "",
+                resolution: "orig"
+            },
+            methods: {
+                init: function () {
+                    this.id = this.$refs.main.dataset.id;
+                    this.displayName = this.$refs.main.dataset.id;
+                    // let self = this;
+                    // this.$http.get("/videoName/" + this.id).then(
+                    //     (response) => {
+                    //         self.displayName = response.bodyText;
+                    //     },
+                    //     (reason) => {
+                    //         alert(reason);
+                    //     }
+                    // )
+                },
+                download: function () {
+                    this.$http.get(
+                        "/video/" + this.id,
+                        {
+                            params: {
+                                resolution: this.resolution,
+                                inline: false
+                            },
+                            responseType: "blob"
+                        }
+                    ).then(
+                        response => {
+                            let link = document.createElement('a');
+                            link.href = URL.createObjectURL(response.bodyBlob);
+                            let m = response.headers.map['content-disposition'][0].match(/filename="(.+)"/)
+                            link.download = m[1];
+                            link.click();
+                        },
+                        reason => {alert(reason);});
+                },
+                changeResolution: function () {
+                    let e = this.$refs.video;
+                    e.load();
+                }
+            }
+        })
+        main.init();
+    </script>
+</body>
+</html>

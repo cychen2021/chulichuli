@@ -1,1 +1,3 @@
 rootProject.name = 'chulichuli'
+include 'browser'
+include 'encoder'

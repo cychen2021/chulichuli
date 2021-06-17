@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>楚哩楚哩视频网</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+</head>
+<body>
+<h1>楚哩楚哩视频网</h1>
+<form id="selector" action="/video" @submit.prevent="upload">
+    <input @change="setFiles" accept=".mp4" type="file"/>
+    <input type="submit" :disabled="disableSubmit" :value="`${uploading? '上传中...' : '上传'}`"/>
+<!--        <div v-if="uploading">上传中...</div>-->
+<!--        <div v-else>上传</div>-->
+    </input>
+</form>
+<hr/>
+
+<!--<div id="indicator" v-if="uploading">-->
+<!--    {{fileName}}正在上传中...-->
+<!--</div>-->
+
+<table id="list" style="min-width: 50%" frame="border" rules="all">
+    <tr align="center">
+        <th>
+            序号
+        </th>
+        <th>
+            文件
+        </th>
+    </tr>
+    <tr align="center" v-for="(entry, idx) in list">
+        <td>
+            {{idx+1}}
+        </td>
+        <td>
+            <a :href="`display/${entry.id}`">{{entry.displayName}}</a>
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    let theList = new Vue({
+        el: "#list",
+        data: {
+            list: null
+        },
+        methods: {
+            getList: function () {
+                let self = this;
+                this.$http.get("list").then(
+                    (response) => {
+                        self.list = [];
+                        let d = response.data;
+                        for (let i = 0; i < d.length; i++) {
+                            self.list.push({
+                                displayName: d[i],
+                                id: d[i]
+                            })
+                        }
+                    },
+                    (reason) => {
+                        alert(reason);
+                    }
+                )
+            }
+        }
+    })
+
+    // let indicator = new Vue({
+    //     el: "#indicator",
+    //     data: {
+    //         uploading: false,
+    //         fileName: null
+    //     }
+    // })
+    let selector = new Vue({
+        el: "#selector",
+        data: {
+            file: null,
+            disableSubmit: false,
+            // fileName: null
+            uploading: false
+        },
+        methods: {
+            setFiles: function (e) {
+                let f = e.target.files[0]
+                this.file = f;
+                // indicator.fileName = f.name;
+            },
+            upload: function (e) {
+                if (this.file === null) {
+                    alert("未选择要上传的文件！");
+                    return;
+                }
+                if (theList.list !== null) {
+                    for (let i = 0; i < theList.list.length; i++) {
+                        if (this.file.name === theList.list[i].displayName) {
+                            alert(this.file.name+"与已有文件重名，请重新选择！")
+                            return;
+                        }
+                    }
+                }
+
+                let formData = new FormData();
+                formData.append('file', this.file);
+                this.disableSubmit = true;
+                this.uploading = true;
+
+                let self = this;
+                this.$http.put("/video", formData)
+                    .then(
+                        (_) => {
+                            self.disableSubmit = false;
+                            this.uploading = false;
+                            theList.getList();
+                        },
+                        (reason) => { alert(reason)
+                    });
+            }
+        }
+    });
+    theList.getList();
+</script>
+</body>
+</html>

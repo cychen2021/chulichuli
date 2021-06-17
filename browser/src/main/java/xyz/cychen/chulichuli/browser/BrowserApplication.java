@@ -1,13 +1,13 @@
-package xyz.cychen.chulichuli;
+package xyz.cychen.chulichuli.browser;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ChulichuliApplication {
+public class BrowserApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ChulichuliApplication.class, args);
+		SpringApplication.run(BrowserApplication.class, args);
 	}
 
 }
