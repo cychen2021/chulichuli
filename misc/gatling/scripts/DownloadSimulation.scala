@@ -14,12 +14,10 @@ class DowloadSimulation extends Simulation {
         .acceptEncodingHeader("gzip, deflate")
         .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
 
-    val testFile = "C:/Space/Workspace/testdata/cat.mp4"
-
     val request = http("download").get("/video/cat.mp4").queryParam("resolution", "orig").queryParam("inline", "false")
 
     // A scenario is a chain of requests and pauses
     val scn = scenario("download").exec(request)
-    setUp(scn.inject(constantUsersPerSec(1).during(16.seconds)).protocols(httpProtocol))
+    setUp(scn.inject(constantUsersPerSec(4).during(10.seconds)).protocols(httpProtocol))
     // setUp(scn.inject(atOnceUsers(12)).protocols(httpProtocol))
 }

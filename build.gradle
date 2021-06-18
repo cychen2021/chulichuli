@@ -20,4 +20,7 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
     apply plugin: 'com.google.cloud.tools.jib'
+//    jib {
+//        allowInsecureRegistries true
+//    }
 }

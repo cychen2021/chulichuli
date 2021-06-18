@@ -14,11 +14,11 @@ class UploadSimulation extends Simulation {
         .acceptEncodingHeader("gzip, deflate")
         .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
 
-    val testFile = "C:/Space/Workspace/testdata/cat.mp4"
+    val testFile = "/home/nomanous/Space/Workspace/testdata/cat.mp4"
 
     val request = http("upload").put("/video").bodyPart(RawFileBodyPart("file", testFile))
 
     // A scenario is a chain of requests and pauses
     val scn = scenario("upload").exec(request)
-    setUp(scn.inject(constantUsersPerSec(0.5).during(32.seconds)).protocols(httpProtocol))
+    setUp(scn.inject(constantUsersPerSec(4).during(10.seconds)).protocols(httpProtocol))
 }
