@@ -1,0 +1,10 @@
+{
+  "simulation": "DowloadSimulation",
+  "simulationId": "dowloadsimulation",
+  "start": 1624007365999,
+  "description": "download, 4 browsers",
+  "scenarios": ["download"],
+  "assertions": [
+
+  ]
+}

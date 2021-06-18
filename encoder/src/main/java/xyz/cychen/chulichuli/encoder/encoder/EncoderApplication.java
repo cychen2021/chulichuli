@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +27,8 @@ import java.util.regex.Pattern;
 @ComponentScan(basePackageClasses = { RabbitMQ.class})
 @Import({RabbitMQ.class, MinIO.class})
 public class EncoderApplication implements CommandLineRunner {
+
+	private static final boolean encoderTesting = true;
 
 	private RabbitMQ rabbitMQ;
 	private MinIO minIO;
@@ -62,7 +65,11 @@ public class EncoderApplication implements CommandLineRunner {
 		}
 	}
 
+	final AtomicInteger taskCount = new AtomicInteger();
+
 	private void  processMessage(GetResponse message){
+		Date ts = encoderTesting ? message.getProps().getTimestamp() : null;
+
 		String text = new String(message.getBody(), StandardCharsets.UTF_8);
 		Pattern p = Pattern.compile("\\{(.+)}\\{(.+)}\\{(.+)}");
 		Matcher m = p.matcher(text);
@@ -94,12 +101,23 @@ public class EncoderApplication implements CommandLineRunner {
 			e.encode(new MultimediaObject(input), f720, attr720);
 			minIO.saveFile(f720, f720Name, MinIO.Bucket.B720);
 			System.out.println(fileName + " converted to 720p!");
+			if (encoderTesting) {
+				Date finish = new Date();
+				long start = ts.getTime();
+				long end = finish.getTime();
+				long span = end - start;
+				try(FileOutputStream fs = new FileOutputStream("/outputs.txt", true)) {
+					fs.write(String.format("%d %d %d\n", span, start, end).getBytes(StandardCharsets.UTF_8));
+				}
+				int c = taskCount.incrementAndGet();
+				System.out.printf("Task %d completed!%n", c);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private final Integer maxTasks = 3;
+	private final Integer maxTasks = 2;
 	private final AtomicInteger currentTasks = new AtomicInteger(0);
 
 	@Override

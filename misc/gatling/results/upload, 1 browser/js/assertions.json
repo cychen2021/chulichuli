@@ -1,0 +1,10 @@
+{
+  "simulation": "UploadSimulation",
+  "simulationId": "uploadsimulation",
+  "start": 1624008195354,
+  "description": "upload, 1 browser",
+  "scenarios": ["upload"],
+  "assertions": [
+
+  ]
+}

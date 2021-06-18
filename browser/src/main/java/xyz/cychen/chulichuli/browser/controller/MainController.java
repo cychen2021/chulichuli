@@ -9,6 +9,7 @@ import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +44,21 @@ public class MainController {
     private class DuplicateVideoException extends Exception { }
 
     private final String[] allowedFormats = {"mp4"};
+
+    private final static boolean encoderTesting = true;
+
+    @PostMapping("/encoder_test")
+    public ResponseEntity<?> testEncoder(@Param("testFile") String testFile, @Param("times") Integer times) throws IOException, InterruptedException {
+        if (!encoderTesting) {
+            return ResponseEntity.status(501).build();
+        }
+
+        for (int i = 0; i < times; i++) {
+            rabbitMQ.send(String.format("{%s}{%s}{%s}", testFile, testFile, testFile));
+            Thread.sleep(1000);
+        }
+        return ResponseEntity.ok().build();
+    }
 
     private void addVideoEntry(String fileName) throws DuplicateVideoException {
         if (videoRepository.existsByFileName(fileName)) {
