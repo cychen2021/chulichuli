@@ -154,4 +154,4 @@ docker run --name encoder  -d encoder-fix
 
 ## 其他
 
-我们使用的HA-Proxy配置位于`misc/haproxy/haproxy.cfg`，配置适用于4台`browser`服务器的情况，要改为适用于1台服务器，只需将后面3条server条目注释掉即可。运行`docker build -t myhaproxy misc/haproxy`来构建以该配置文件为默认配置的HA-Proxy镜像，并将其命名为myhaproxy推送到Docker中。注意，中国大陆访问Dockerhub速度较慢，因此构建时可能需要使用VPN。
+我们使用的HA-Proxy配置位于`misc/haproxy/haproxy.cfg`，配置适用于4台`browser`服务器的情况，要改为适用于1台服务器，只需将后面3条server条目注释掉即可。运行`docker build -t myhaproxy misc/haproxy`来构建以该配置文件为默认配置的HA-Proxy镜像，并将其命名为myhaproxy推送到Docker中。注意，中国大陆访问Docker Hub速度较慢，因此构建时可能需要使用代理软件。
