@@ -137,7 +137,7 @@ docker run --name encoder  -d encoder-fix
 
 我们为`encoder`添加一个测试用功能，当`EncoderApplication/encoderTesting`置为`true`时，它将在每次转码完成后，输出消息被创建的时间戳、转码完成的时间戳和二者之差到文件中。
 
-随后，我们使用Gatling脚本（位于`misc/gatling/scripts/EncoderTest.scala`中）发送一条这样的请求，将参数`fileName`和`times`分别设置为cat_short.mp4（该文件可[前面](#演示)给出的链接中下载）和8。
+随后，我们使用Gatling脚本（位于`misc/gatling/scripts/EncoderTest.scala`中）发送一条这样的请求，将参数`fileName`和`times`分别设置为cat_short.mp4（该文件可在[前面](#演示)给出的链接中下载）和8。
 
 我们使用Docker容器来模拟服务器，每个Docker容器分配3个CPU核心（宿主机共有6个CPU核心）。
 
